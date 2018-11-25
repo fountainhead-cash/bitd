@@ -1,16 +1,16 @@
 const ip = require('ip')
 module.exports = {
   'rpc': {
-    'protocol': 'http',
+    'protocol': protocol.env.rpc_protocol ? protocol.env.rpc_protocol : 'http',
     'user': process.env.rpc_user ? process.env.rpc_user : 'root',
     'pass': process.env.rpc_pass ? process.env.rpc_pass : 'bitcoin',
     'host': process.env.host ? process.env.host : ip.address(),
-    'port': '8332',
-    'limit': 15
+    'port': process.env.rpc_port ? process.env.rpc_port : '8332',
+    'limit': process.env.limit ? process.env.limit : 15,
   },
   'db': {
-    'name': 'bitdb',
-    'url': 'mongodb://localhost:27017',
+    'name': process.env.mongodb_name ? process.env.mongodb_name : 'bitdb',
+    'url': process.env.mongodb_url ? process.env.mongodb_name : 'mongodb://localhost:27017',
     'index': {
       'confirmed': {
         'keys': [
