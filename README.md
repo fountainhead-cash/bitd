@@ -69,3 +69,5 @@ CD to install location and run bitd
 ```
 pm2 start index.js
 ```
+
+### Troubleshooting
