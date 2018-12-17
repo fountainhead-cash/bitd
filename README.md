@@ -71,3 +71,8 @@ pm2 start index.js
 ```
 
 ### Troubleshooting
+
+#### Shit keeps crashing on me (replace 20000 with however much memory in MB you have to spare)
+```
+pm2 start index.js --node-args="--max_old_space_size=20000"
+```
