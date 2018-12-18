@@ -71,7 +71,7 @@ pm2 start index.js
 
 ### Troubleshooting
 
-#### Shit keeps crashing on me
+#### BitD keeps crashing on bigger blocks
 ```
 pm2 start index.js --node-args="--max_old_space_size=8192"
 ```
