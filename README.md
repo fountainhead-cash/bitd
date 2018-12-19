@@ -75,3 +75,7 @@ pm2 start index.js
 ```
 pm2 start index.js --node-args="--max_old_space_size=8192"
 ```
+
+#### This is taking ages
+
+The current version of BitD takes heavy use of json-rpc, which is very unoptimized for this particular workload. We are working on possible workarounds for this issue, but for now try increasing rpcworkqueue in your bitcoin.conf file should make the process slightly faster.
