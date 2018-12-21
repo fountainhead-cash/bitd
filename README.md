@@ -1,3 +1,7 @@
+## What is Bitd?
+
+Bitd is a scraper for Bitcoin Cash that fetches transaction data from the blockchain and stores it in a MongoDB database. You need to install this to set up bitserve and run a bitdb node. This scraper is currently very unoptimized, so expect a long initial sync time.
+
 ## Installation
 
 ### Prerequisite
