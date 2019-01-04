@@ -38,7 +38,7 @@ module.exports = {
   },
   'zmq': {
     'incoming': {
-      'host': process.env.host ? process.env.host : ip.address(),
+      'host': '127.0.0.1',
       'port': '28332'
     },
     'outgoing': {
