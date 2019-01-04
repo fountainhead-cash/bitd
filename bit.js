@@ -9,29 +9,15 @@ const mingo = require('mingo')
 const jq = require('bigjq')
 const bcode = require('bcode')
 
-const Filter = require('./bitdb.json')
-
 var Db
 var Info
 var rpc
-var filter
 var processor
 
 const init = function(db, info) {
   return new Promise(function(resolve) {
     Db = db
     Info = info
-
-    if (Filter.filter && Filter.filter.q && Filter.filter.q.find) {
-      let query = bcode.encode(Filter.filter.q.find)
-      filter = new mingo.Query(query)
-    } else {
-      filter = null
-    }
-
-    if (Filter.filter && Filter.filter.r && Filter.filter.r.f) {
-      processor = Filter.filter.r.f
-    }
 
     rpc = new RpcClient(Config.rpc)
     resolve()
@@ -120,18 +106,6 @@ const crawl = async function(block_index) {
       }))
     }
     let btxs = await Promise.all(tasks)
-
-    if (filter) {
-      btxs = btxs.filter(function(row) {
-        return filter.test(row)
-      })
-
-      if (processor) {
-        btxs = bcode.decode(btxs)
-        btxs  = await jq.run(processor, btxs)
-      }
-      console.log('Filtered Xputs = ', btxs.length)
-    }
 
     console.log('Block ' + block_index + ' : ' + txs.length + 'txs | ' + btxs.length + ' filtered txs')
     return btxs
