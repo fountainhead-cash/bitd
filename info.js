@@ -1,6 +1,5 @@
 const level = require('level')
 const kv = level('./.state')
-const Filter = require('./bitdb.json')
 /**
 * Return the last synchronized checkpoint
 */
@@ -10,7 +9,7 @@ const checkpoint = function() {
       if (err) {
         if (err.notFound) {
           console.log('Checkpoint not found, starting from GENESIS')
-          resolve(Filter.from)
+          resolve(Config.core.from)
         } else {
           console.log('err', err)
           reject(err)

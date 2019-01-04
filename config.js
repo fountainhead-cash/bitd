@@ -46,4 +46,8 @@ module.exports = {
       'port': process.env.zmq_outgoing_port ? process.env.zmq_outgoing_port : '28339'
     }
   }
+  'core': {
+    'version': '0.2.0',
+    'from': Number.parseInt(process.env.core_from ? process.env.core_from : 525470))
+  }
 }

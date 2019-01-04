@@ -1,6 +1,5 @@
 require('dotenv').config()
 const Config = require('./config.js')
-const Filter = require('./bitdb.json')
 const Info = require('./info.js')
 const Bit = require('./bit.js')
 const Db = require('./db')
@@ -17,14 +16,14 @@ const daemon = {
     const lastSynchronized = await Info.checkpoint()
 
     console.time('Indexing Keys')
-    if (lastSynchronized === Filter.from) {
+    if (lastSynchronized === Config.core.from) {
       // First time. Try indexing
       console.log('Indexing...', new Date())
       await Db.block.index()
     }
     console.timeEnd('Indexing Keys')
 
-    if (lastSynchronized !== Filter.from) {
+    if (lastSynchronized !== Config.core.from) {
       // Resume
       // Rewind one step and start
       // so that it can recover even in cases
