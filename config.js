@@ -6,7 +6,7 @@ module.exports = {
     'pass': process.env.rpc_pass ? process.env.rpc_pass : 'bitcoin',
     'host': process.env.rpc_host ? process.env.host : ip.address(),
     'port': process.env.rpc_port ? process.env.rpc_port : '8332',
-    'limit': process.env.rpc_limit ? process.env.rpc_limit : '15'
+    'limit': Number.parseInt(process.env.rpc_limit ? process.env.rpc_limit : 15)
   },
   'db': {
     'name': process.env.db_name ? process.env.db_name : 'bitdb',
@@ -45,9 +45,9 @@ module.exports = {
       'host': process.env.zmq_outgoing_host ? process.env.zmq_outgoing_host : '0.0.0.0',
       'port': process.env.zmq_outgoing_port ? process.env.zmq_outgoing_port : '28339'
     }
-  }
+  },
   'core': {
     'version': '0.2.0',
-    'from': Number.parseInt(process.env.core_from ? process.env.core_from : 525470))
+    'from': Number.parseInt(process.env.core_from ? process.env.core_from : 525470)
   }
 }
