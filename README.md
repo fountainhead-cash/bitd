@@ -23,9 +23,7 @@ txindex=1
 # [rpc]
 # Accept command line and JSON-RPC commands.
 server=1
-# Default Username and Password for JSON-RPC connections
-# BitDB uses these values by default, but if you can change the settings
-# By setting the config.json file in BitDB folder
+# Choose a strong password here
 rpcuser=root
 rpcpassword=bitcoin
 
@@ -54,6 +52,13 @@ git clone https://github.com/fountainhead-cash/bitd.git
 Install dependencies:
 ```
 npm install
+```
+
+Configure bitd:
+```
+cp .env.example .env
+$(EDITOR) .env
+# note, you should only have to change rpc_user and rpc_pass normally
 ```
 
 Start bitd:
