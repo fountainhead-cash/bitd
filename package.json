@@ -1,5 +1,5 @@
 {
-  "name": "bitd",
+  "name": "fountainhead-bitd",
   "version": "0.2.1",
   "description": "decentralized autonomous database over bitcoin",
   "main": "index.js",
