@@ -1,13 +1,13 @@
 const zmq = require('zeromq')
 const RpcClient = require('bitcoind-rpc')
-const TNA = require('tna')
+const TNA = require('fountainhead-tna')
 const pLimit = require('p-limit')
 const pQueue = require('p-queue')
 const Config = require('./config.js')
 const queue = new pQueue({concurrency: Config.rpc.limit})
 const mingo = require('mingo')
-const jq = require('bigjq')
-const bcode = require('bcode')
+const jq = require('fountainhead-bigjq')
+const bcode = require('fountainhead-bcode')
 
 const Filter = require('./bitdb.json')
 
