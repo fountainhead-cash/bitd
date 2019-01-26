@@ -1,6 +1,6 @@
 {
   "name": "fountainhead-bitd",
-  "version": "0.2.2",
+  "version": "0.2.4",
   "description": "decentralized autonomous database over bitcoin",
   "main": "index.js",
   "author": "21 Century Motor Company",
@@ -21,7 +21,7 @@
     "mongodb": "^3.1.4",
     "p-limit": "^2.0.0",
     "p-queue": "^3.0.0",
-    "fountainhead-tna": "0.1.2",
+    "fountainhead-tna": "0.1.5",
     "traverse": "^0.6.6",
     "zeromq": "^4.6.0"
   },
