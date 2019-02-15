@@ -5,9 +5,6 @@ const pLimit = require('p-limit')
 const pQueue = require('p-queue')
 const Config = require('./config.js')
 const queue = new pQueue({concurrency: Config.rpc.limit})
-const mingo = require('mingo')
-const jq = require('fountainhead-bigjq')
-const bcode = require('fountainhead-bcode')
 
 var Db
 var Info
