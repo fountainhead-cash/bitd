@@ -103,7 +103,7 @@ const outsock = zmq.socket('pub')
 const listen = function() {
   let sock = zmq.socket('sub')
   sock.connect('tcp://' + Config.zmq.incoming.host + ':' + Config.zmq.incoming.port)
-  sock.subscribe('hashtx')
+  sock.subscribe('rawtx')
   sock.subscribe('hashblock')
   console.log('Subscriber connected to port ' + Config.zmq.incoming.port)
 
@@ -112,101 +112,102 @@ const listen = function() {
 
   // Listen to ZMQ
   sock.on('message', async function(topic, message) {
-    if (topic.toString() === 'hashtx') {
-      let hash = message.toString('hex')
-      console.log('New mempool hash from ZMQ = ', hash)
-      await sync('mempool', hash)
+    if (topic.toString() === 'rawtx') {
+      let rawtx = message.toString('hex')
+      console.log('New transaction from ZMQ')
+      await handle_zmq_tx(rawtx)
     } else if (topic.toString() === 'hashblock') {
       let hash = message.toString('hex')
       console.log('New block hash from ZMQ = ', hash)
-      await sync('block')
+      await handle_zmq_block()
     }
   })
 
   // Don't trust ZMQ. Try synchronizing every 1 minute in case ZMQ didn't fire
   setInterval(async function() {
-    await sync('block')
+    await handle_zmq_block()
   }, 60000)
-
 }
 
-const sync = async function(type, hash) {
-  if (type === 'block') {
-    try {
-      const lastSynchronized = await Info.checkpoint()
-      const currentHeight = await request.height()
-      console.log('Last Synchronized = ', lastSynchronized)
-      console.log('Current Height = ', currentHeight)
+const handle_zmq_block = async function() {
+  try {
+    const lastSynchronized = await Info.checkpoint()
+    const currentHeight = await request.height()
+    console.log('Last Synchronized = ', lastSynchronized)
+    console.log('Current Height = ', currentHeight)
 
-      for(let index=lastSynchronized+1; index<=currentHeight; index++) {
-        console.log('RPC BEGIN ' + index, new Date().toString())
-        console.time('RPC END ' + index)
-        let content = await crawl(index)
-        console.timeEnd('RPC END ' + index)
-        console.log(new Date().toString())
-        console.log('DB BEGIN ' + index, new Date().toString())
-        console.time('DB Insert ' + index)
+    for(let index=lastSynchronized+1; index<=currentHeight; index++) {
+      console.log('RPC BEGIN ' + index, new Date().toString())
+      console.time('RPC END ' + index)
+      let content = await crawl(index)
+      console.timeEnd('RPC END ' + index)
+      console.log(new Date().toString())
+      console.log('DB BEGIN ' + index, new Date().toString())
+      console.time('DB Insert ' + index)
 
-        await Db.block.insert(content, index)
+      await Db.block.insert(content, index)
 
-        await Info.updateTip(index)
-        console.timeEnd('DB Insert ' + index)
-        console.log('------------------------------------------')
-        console.log('\n')
+      await Info.updateTip(index)
+      console.timeEnd('DB Insert ' + index)
+      console.log('------------------------------------------')
+      console.log('\n')
 
-        // zmq broadcast
-        let b = { i: index, txs: content }
-        if (Config.core.verbose) {
-          console.log('Zmq block = ', JSON.stringify(b, null, 2))
-        }
-        outsock.send(['block', JSON.stringify(b)])
+      // zmq broadcast
+      let b = { i: index, txs: content }
+      if (Config.core.verbose) {
+        console.log('Zmq block = ', JSON.stringify(b, null, 2))
       }
-
-      // clear mempool and synchronize
-      if (lastSynchronized < currentHeight) {
-        console.log('Clear mempool and repopulate')
-        let items = await request.mempool()
-        await Db.mempool.sync(items)
-      }
-
-      if (lastSynchronized === currentHeight) {
-        console.log('no update')
-        return null
-      } else {
-        console.log('[finished]')
-        return currentHeight
-      }
-    } catch (e) {
-      console.log('Error', e)
-      console.log('Shutting down Bitdb...', new Date().toString())
-      await Db.exit()
-      process.exit()
+      outsock.send(['block', JSON.stringify(b)])
     }
-  } else if (type === 'mempool') {
-    queue.add(async function() {
-      let content = await request.tx(hash)
-      try {
-        await Db.mempool.insert(content)
-        console.log('# Q inserted [size: ' + queue.size + ']',  hash)
-        console.log(content)
-        outsock.send(['mempool', JSON.stringify(content)])
-      } catch (e) {
-        // duplicates are ok because they will be ignored
-        if (e.code == 11000) {
-          console.log('Duplicate mempool item: ', content)
-        } else {
-          console.log('## ERR ', e, content)
-          process.exit()
-        }
-      }
-    })
-    return hash
+
+    // clear mempool and synchronize
+    if (lastSynchronized < currentHeight) {
+      console.log('Clear mempool and repopulate')
+      let items = await request.mempool()
+      await Db.mempool.sync(items)
+    }
+
+    if (lastSynchronized === currentHeight) {
+      console.log('no update')
+      return null
+    } else {
+      console.log('[finished]')
+      return currentHeight
+    }
+  } catch (e) {
+    console.log('Error', e)
+    console.log('Shutting down Bitdb...', new Date().toString())
+    await Db.exit()
+    process.exit()
   }
+}
+
+const handle_zmq_tx = async function(rawtx) {
+  queue.add(async function() {
+    let tx = new bch.Transaction(rawtx);
+    let tna = await TNA.fromGene(tx);
+    try {
+      await Db.mempool.insert(tna)
+      console.log('# Q inserted [size: ' + queue.size + ']',  tna.tx.h)
+      if (Config.core.verbose) {
+        console.log(tna)
+      }
+      outsock.send(['mempool', JSON.stringify(tna)])
+    } catch (e) {
+      // duplicates are ok because they will be ignored
+      if (e.code == 11000) {
+        console.log('Duplicate mempool item: ', tna.tx.h)
+      } else {
+        console.log('## ERR ', e, tna)
+        process.exit()
+      }
+    }
+  })
 }
 const run = async function() {
 
   // initial block sync
-  await sync('block')
+  await handle_zmq_block()
 
   // initial mempool sync
   console.log('Clear mempool and repopulate')
@@ -214,5 +215,5 @@ const run = async function() {
   await Db.mempool.sync(items)
 }
 module.exports = {
-  init: init, crawl: crawl, listen: listen, sync: sync, run: run
+  init: init, crawl: crawl, listen: listen, run: run
 }

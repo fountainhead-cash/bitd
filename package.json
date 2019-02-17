@@ -1,6 +1,6 @@
 {
   "name": "fountainhead-bitd",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "decentralized autonomous database over bitcoin",
   "main": "index.js",
   "author": "21 Century Motor Company",
