@@ -4,7 +4,7 @@ module.exports = {
     'protocol': process.env.rpc_protocol ? process.env.rpc_protocol : 'http',
     'user': process.env.rpc_user ? process.env.rpc_user : 'root',
     'pass': process.env.rpc_pass ? process.env.rpc_pass : 'bitcoin',
-    'host': process.env.rpc_host ? process.env.host : ip.address(),
+    'host': process.env.rpc_host ? process.env.rpc_host : ip.address(),
     'port': process.env.rpc_port ? process.env.rpc_port : '8332',
     'limit': Number.parseInt(process.env.rpc_limit ? process.env.rpc_limit : 15)
   },
