@@ -1,3 +1,4 @@
+const bch = require('bitcore-lib-cash')
 const zmq = require('zeromq')
 const RpcClient = require('bitcoind-rpc')
 const TNA = require('fountainhead-tna')
@@ -28,8 +29,8 @@ const request = {
           console.log('Err = ', err)
           throw new Error(err)
         } else {
-          rpc.getBlock(res.result, function(err, block) {
-            resolve(block)
+          rpc.getBlock(res.result, 0, function(err, block) {
+            resolve(bch.Block.fromString(block.result))
           })
         }
       })
@@ -80,36 +81,24 @@ const request = {
   }
 }
 const crawl = async function(block_index) {
-  let block_content = await request.block(block_index)
-  let block_hash = block_content.result.hash
-  let block_time = block_content.result.time
+  let block = await request.block(block_index)
 
-  if (block_content && block_content.result) {
-    let txs = block_content.result.tx
-    console.log('crawling txs = ', txs.length)
-    let tasks = []
-    const limit = pLimit(Config.rpc.limit)
-    for(let i=0; i<txs.length; i++) {
-      tasks.push(limit(async function() {
-        let t = await request.tx(txs[i]).catch(function(e) {
-          console.log('Error = ', e)
-        })
-        t.blk = {
-          i: block_index,
-          h: block_hash,
-          t: block_time
-        }
-        return t
-      }))
-    }
-    let btxs = await Promise.all(tasks)
+  let btxs = []
+  for (let tx of block.transactions) {
+    let tna = await TNA.fromTx(tx.toString())
+   tna.blk = {
+     i: block_index,
+     h: block.header.hash,
+     t: block.header.time
+   }
 
-    console.log('Block ' + block_index + ' : ' + txs.length + 'txs | ' + btxs.length + ' filtered txs')
-    return btxs
-  } else {
-    return []
+   btxs.push(tna)
   }
+
+  console.log('Block ' + block_index + ' : ' + btxs.length + 'txs')
+  return btxs
 }
+
 const outsock = zmq.socket('pub')
 const listen = function() {
   let sock = zmq.socket('sub')
