@@ -167,7 +167,7 @@ var block = {
       let result = await db.collection('confirmed').indexInformation({full: true})
       console.log('* Confirmed Index = ', result)
       result = await db.collection('unconfirmed').indexInformation({full: true})
-      console.log('* Unonfirmed Index = ', result)
+      console.log('* Unconfirmed Index = ', result)
     } catch (e) {
       console.log('* Error fetching index info ', e)
       process.exit()
