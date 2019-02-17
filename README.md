@@ -35,7 +35,7 @@ disablewallet=1
 # [ZeroMQ]
 # ZeroMQ messages power the realtime BitDB crawler
 # so it's important to set the endpoint
-zmqpubhashtx=tcp://127.0.0.1:28332
+zmqpubrawtx=tcp://127.0.0.1:28332
 zmqpubhashblock=tcp://127.0.0.1:28332
 
 # BitDB makes heavy use of JSON-RPC so it's set to a higher number
