@@ -85,14 +85,14 @@ const crawl = async function(block_index) {
 
   let btxs = []
   for (let tx of block.transactions) {
-    let tna = await TNA.fromTx(tx.toString())
-   tna.blk = {
-     i: block_index,
-     h: block.header.hash,
-     t: block.header.time
-   }
+    let tna = await TNA.fromGene(tx)
+    tna.blk = {
+      i: block_index,
+      h: block.header.hash,
+      t: block.header.time
+    }
 
-   btxs.push(tna)
+    btxs.push(tna)
   }
 
   console.log('Block ' + block_index + ' : ' + btxs.length + 'txs')
