@@ -167,7 +167,9 @@ const sync = async function(type, hash) {
 
         // zmq broadcast
         let b = { i: index, txs: content }
-        console.log('Zmq block = ', JSON.stringify(b, null, 2))
+        if (Config.core.verbose) {
+          console.log('Zmq block = ', JSON.stringify(b, null, 2))
+        }
         outsock.send(['block', JSON.stringify(b)])
       }
 
