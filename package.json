@@ -1,6 +1,6 @@
 {
   "name": "fountainhead-bitd",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "decentralized autonomous database over bitcoin",
   "main": "index.js",
   "author": "21 Century Motor Company",
@@ -15,9 +15,7 @@
     "bitcore-lib-cash": "^0.19.0",
     "dotenv": "^6.0.0",
     "eventsource": "^1.0.7",
-    "fountainhead-bcode": "0.0.6",
-    "fountainhead-bigjq": "0.0.16",
-    "fountainhead-tna": "0.1.6",
+    "fountainhead-core": "0.0.2",
     "iconv-lite": "^0.4.24",
     "ip": "^1.1.5",
     "level": "^4.0.0",
