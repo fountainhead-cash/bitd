@@ -81,20 +81,26 @@ npm install pm2 -g
 
 CD to install location and run bitd
 ```
-pm2 start index.js --node-args="--max_old_space_size=4096"
+pm2 start index.js --name "bitd" --node-args="--max_old_space_size=4096"
 ```
 
 ### Troubleshooting
+
+#### View log
+
+```
+pm2 logs bitd
+```
 
 #### BitD crashing on bigger blocks
 
 If it crashes, it's more than likely node is running out of memory, so try gradually increasing the max old space size.
 ```
-pm2 start index.js --node-args="--max_old_space_size=8192"
+pm2 start index.js --name "bitd" --node-args="--max_old_space_size=8192"
 ```
 
 ## Credits
 
 2018 Unwriter
 
-2018-Current Fountainhead-Cash Developers
+2018-current Fountainhead-Cash Developers
