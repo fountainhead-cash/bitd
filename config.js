@@ -44,7 +44,11 @@ module.exports = {
     'outgoing': {
       'host': process.env.zmq_outgoing_host ? process.env.zmq_outgoing_host : '0.0.0.0',
       'port': process.env.zmq_outgoing_port ? process.env.zmq_outgoing_port : '28339'
-    }
+    },
+    'outgoing_test': {
+      'host': process.env.zmq_outgoing_test_host ? process.env.zmq_outgoing_test_host : '0.0.0.0',
+      'port': process.env.zmq_outgoing_test_port ? process.env.zmq_outgoing_test_port : '28369'
+    },
   },
   'core': {
     'version': '0.2.0',
