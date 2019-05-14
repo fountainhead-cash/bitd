@@ -14,7 +14,7 @@ module.exports = {
     'index': {
       'confirmed': {
         'keys': [
-          'tx.h', 'blk.i', 'blk.t', 'blk.h',
+          'blk.i', 'blk.t', 'blk.h',
           'in.e.a', 'in.e.h', 'in.e.i', 'in.i',
           'out.e.a', 'out.e.i', 'out.e.v', 'out.i',
           'in.b0', 'in.b1', 'in.b2', 'in.b3', 'in.b4', 'in.b5', 'in.b6', 'in.b7', 'in.b8', 'in.b9', 'in.b10', 'in.b11', 'in.b12', 'in.b13', 'in.b14', 'in.b15',
@@ -25,7 +25,6 @@ module.exports = {
       },
       'unconfirmed': {
         'keys': [
-          'tx.h',
           'in.e.a', 'in.e.h', 'in.e.i', 'in.i',
           'out.e.a', 'out.e.i', 'out.e.v', 'out.i',
           'in.b0', 'in.b1', 'in.b2', 'in.b3', 'in.b4', 'in.b5', 'in.b6', 'in.b7', 'in.b8', 'in.b9', 'in.b10', 'in.b11', 'in.b12', 'in.b13', 'in.b14', 'in.b15',

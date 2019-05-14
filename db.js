@@ -121,27 +121,32 @@ var block = {
         let collectionName = collectionNames[j]
         let keys = config.index[collectionName].keys
         let fulltext = config.index[collectionName].fulltext
-        if (keys) {
-          console.log('Indexing keys...')
-          for(let i=0; i<keys.length; i++) {
-            let o = {}
-            o[keys[i]] = 1
-            console.time('Index:' + keys[i])
-            try {
-              if (keys[i] === 'tx.h') {
-                await db.collection(collectionName).createIndex(o, { unique: true })
-                console.log('* Created unique index for ', keys[i])
-              } else {
-                await db.collection(collectionName).createIndex(o)
-                console.log('* Created index for ', keys[i])
-              }
-            } catch (e) {
-              console.log(e)
-              process.exit()
-            }
-            console.timeEnd('Index:' + keys[i])
-          }
+
+        console.log('Indexing tx.h');
+        console.time('Unique Index: tx.h')
+        try {
+          await db.collection(collectionName).createIndex({'tx.h': 1}, { unique: true })
+        } catch (e) {
+          console.log(e)
+          process.exit()
         }
+        console.timeEnd('Unique Index: tx.h')
+        console.log('* Created unique index for ', 'tx.h')
+
+        if (keys) {
+          console.log('Indexing keys... [' + keys.join(',') + ']')
+          console.time('Indexing');
+          try {
+            const keyPatterns = keys.map(k => ({ 'key': { [k]: 1 } }));
+            console.log(keyPatterns);
+            await db.collection(collectionName).createIndexes(keyPatterns);
+          } catch (e) {
+            console.log(e)
+            process.exit()
+          }
+          console.timeEnd('Indexing');
+        }
+
         if (fulltext) {
           console.log('Creating full text index...')
           let o = {}
