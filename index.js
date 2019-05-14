@@ -3,6 +3,7 @@ const Config = require('./config.js')
 const Info = require('./info.js')
 const Bit = require('./bit.js')
 const Db = require('./db')
+const Stresstest = require('./stresstest')
 const ip = require('ip')
 console.log(ip.address())
 
@@ -65,6 +66,9 @@ const util = {
       process.exit()
     } else if (cmd === 'index') {
       await Db.block.index()
+      process.exit()
+    } else if (cmd === 'dropindexes') {
+      await Db.block.dropindexes()
       process.exit()
     }
   },

@@ -172,6 +172,31 @@ var block = {
       console.log('* Error fetching index info ', e)
       process.exit()
     }
+  },
+  dropindexes: async function() {
+    console.log('* Dropping all MongoDB Indexes...')
+    console.time('TotalDropIndex')
+
+    try {
+      console.time('Drop Indexes: confirmed')
+      await db.collection('confirmed').dropIndexes();
+      console.timeEnd('Drop Indexes: confirmed')
+    } catch (e) {
+      console.log('* Error dropping indexes', e)
+      process.exit()
+    }
+
+    try {
+      console.time('Drop Indexes: unconfirmed')
+      await db.collection('unconfirmed').dropIndexes();
+      console.timeEnd('Drop Indexes: unconfirmed')
+    } catch (e) {
+      console.log('* Error dropping indexes', e)
+      process.exit()
+    }
+
+    console.log('* Finished dropping all MongoDB Indexes...')
+    console.timeEnd('TotalDropIndex')
   }
 }
 module.exports = {
