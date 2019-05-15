@@ -146,6 +146,9 @@ const handle_zmq_block = async function() {
       console.time('DB Insert ' + index)
 
       await Db.block.insert(content, index)
+      if (Config.core.utxo_tracking) {
+        await Db.utxo.apply_block(index)
+      }
 
       await Info.updateTip(index)
       console.timeEnd('DB Insert ' + index)

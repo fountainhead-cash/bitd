@@ -25,6 +25,10 @@ const daemon = {
       // and the block was not indexed completely.
       console.log('Resuming...')
       await util.fix(lastSynchronized-1)
+    } else {
+      if (Config.core.utxo_tracking) {
+        Db.utxo.initial_index();
+      }
     }
 
     // 3. Start synchronizing
@@ -62,6 +66,9 @@ const util = {
     } else if (cmd === 'reset') {
       await Db.block.reset()
       await Db.mempool.reset()
+      if (Config.core.utxo_tracking) {
+        await Db.utxo.reset()
+      }
       await Info.deleteTip()
       process.exit()
     } else if (cmd === 'index') {
@@ -69,6 +76,15 @@ const util = {
       process.exit()
     } else if (cmd === 'dropindexes') {
       await Db.block.dropindexes()
+      process.exit()
+    } else if (cmd === 'utxo-sync') {
+      await Db.utxo.sync();
+      process.exit();
+    } else if (cmd === 'utxo-reset') { // TODO delete me
+      await Db.utxo.reset();
+      process.exit();
+    } else {
+      console.log('Unknown command')
       process.exit()
     }
   },
