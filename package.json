@@ -14,7 +14,7 @@
     "bitcoind-rpc": "^0.7.2",
     "dotenv": "^6.0.0",
     "eventsource": "^1.0.7",
-    "fountainhead-core": "0.0.8",
+    "fountainhead-core": "0.0.9",
     "iconv-lite": "^0.4.24",
     "ip": "^1.1.5",
     "level": "^4.0.0",
