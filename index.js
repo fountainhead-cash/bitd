@@ -3,6 +3,7 @@ const Config = require('./config.js')
 const Info = require('./info.js')
 const Bit = require('./bit.js')
 const Db = require('./db')
+const Stresstest = require('./stresstest')
 const ip = require('ip')
 console.log(ip.address())
 
@@ -15,13 +16,6 @@ const daemon = {
     // 2. Bootstrap actions depending on first time
     const lastSynchronized = await Info.checkpoint()
 
-    console.time('Indexing Keys')
-    if (lastSynchronized === Config.core.from) {
-      // First time. Try indexing
-      console.log('Indexing...', new Date())
-      await Db.block.index()
-    }
-    console.timeEnd('Indexing Keys')
 
     if (lastSynchronized !== Config.core.from) {
       // Resume
@@ -31,6 +25,10 @@ const daemon = {
       // and the block was not indexed completely.
       console.log('Resuming...')
       await util.fix(lastSynchronized-1)
+    } else {
+      if (Config.core.utxo_tracking) {
+        Db.utxo.initial_index();
+      }
     }
 
     // 3. Start synchronizing
@@ -38,6 +36,15 @@ const daemon = {
     console.time('Initial Sync')
     await Bit.run()
     console.timeEnd('Initial Sync')
+
+
+    if (lastSynchronized === Config.core.from) {
+      console.time('Indexing Keys')
+      // First time. Try indexing
+      console.log('Indexing...', new Date())
+      await Db.block.index()
+      console.timeEnd('Indexing Keys')
+    }
 
     // 4. Start listening
     Bit.listen()
@@ -59,10 +66,25 @@ const util = {
     } else if (cmd === 'reset') {
       await Db.block.reset()
       await Db.mempool.reset()
+      if (Config.core.utxo_tracking) {
+        await Db.utxo.reset()
+      }
       await Info.deleteTip()
       process.exit()
     } else if (cmd === 'index') {
       await Db.block.index()
+      process.exit()
+    } else if (cmd === 'dropindexes') {
+      await Db.block.dropindexes()
+      process.exit()
+    } else if (cmd === 'utxo-sync') {
+      await Db.utxo.sync();
+      process.exit();
+    } else if (cmd === 'utxo-reset') { // TODO delete me
+      await Db.utxo.reset();
+      process.exit();
+    } else {
+      console.log('Unknown command')
       process.exit()
     }
   },

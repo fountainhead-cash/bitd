@@ -1,7 +1,7 @@
-const bch = require('bitcore-lib-cash')
+const bch = require('fountainhead-core').bitcore
 const zmq = require('zeromq')
 const RpcClient = require('bitcoind-rpc')
-const TNA = require('fountainhead-tna')
+const TNA = require('fountainhead-core').tna
 const pLimit = require('p-limit')
 const pQueue = require('p-queue')
 const Config = require('./config.js')
@@ -146,6 +146,9 @@ const handle_zmq_block = async function() {
       console.time('DB Insert ' + index)
 
       await Db.block.insert(content, index)
+      if (Config.core.utxo_tracking) {
+        await Db.utxo.apply_block(index)
+      }
 
       await Info.updateTip(index)
       console.timeEnd('DB Insert ' + index)
